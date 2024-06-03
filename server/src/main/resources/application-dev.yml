@@ -1,0 +1,11 @@
+datasource:
+  url: jdbc:postgresql://localhost:5432/self-service-ordering
+  username: self-service-ordering
+  password: password
+  driver-class-name: org.postgresql.Driver
+
+jwt:
+  header-name: Authorization
+  admin-secret-key: "RZY8jLh+6Amg+FoW3sgbm6GcF5qCE+kXGIokn+LcFKk="
+  # JWT Token expiration time: 2 hours (7200000 ms)
+  admin-ttl: 7200000

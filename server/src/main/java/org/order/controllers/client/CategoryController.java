@@ -1,0 +1,32 @@
+package org.order.controllers.client;
+
+import lombok.extern.slf4j.Slf4j;
+import org.order.pojo.vo.CategoryClientVO;
+import org.order.services.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
+
+/**
+ * Controller class for handling client requests related to categories.
+ */
+@RestController("clientCategoryController")
+@RequestMapping("/client/{token}/categories")
+@Slf4j
+public class CategoryController {
+
+  @Autowired
+  private CategoryService categoryService;
+
+  /**
+   * Fetches categories for client view.
+   *
+   * @return List of CategoryClientVO objects.
+   */
+  @GetMapping
+  public List<CategoryClientVO> findCategories() {
+    return categoryService.listCategory();
+  }
+}

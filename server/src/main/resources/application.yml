@@ -1,0 +1,21 @@
+spring:
+  profiles:
+    active: dev
+  main:
+    allow-circular-references: true
+  datasource:
+    url: ${datasource.url}
+    username: ${datasource.username}
+    password: ${datasource.password}
+    driver-class-name: ${datasource.driver-class-name}
+
+mybatis:
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: org.order.pojo.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+jwt:
+  header-name: ${jwt.header-name}
+  admin-secret-key: ${jwt.admin-secret-key}
+  admin-ttl: ${jwt.admin-ttl}

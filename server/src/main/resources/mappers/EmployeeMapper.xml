@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.order.mappers.EmployeeMapper">
+    <update id="updateEmployee" parameterType="Employee">
+        UPDATE employee
+        <set>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="status != null and status != ''">
+                status = #{status},
+            </if>
+            updated_by = #{updatedBy},
+            updated_at = #{updatedAt}
+        </set>
+        WHERE id = #{id}
+    </update>
+    <select id="listEmployees" parameterType="org.order.pojo.dto.query.EmployeeQueryDTO"
+            resultType="org.order.pojo.vo.EmployeeVO">
+        SELECT e.id,
+        e.username,
+        e.name,
+        e.status,
+        e.created_at,
+        e.updated_at,
+        ce.name AS created_by,
+        ue.name AS updated_by
+        FROM employee e
+        LEFT JOIN employee ce ON e.created_by = ce.id
+        LEFT JOIN employee ue ON e.updated_by = ue.id
+        <where>
+            <if test="id != null">
+                AND e.id = #{id}
+            </if>
+            <if test="username != null and username != ''">
+                AND e.username = #{username}
+            </if>
+            <if test="name != null and name != ''">
+                AND e.name = #{name}
+            </if>
+            <if test="status != null and status != ''">
+                AND e.status = #{status}
+            </if>
+        </where>
+        ORDER BY e.id
+    </select>
+</mapper>

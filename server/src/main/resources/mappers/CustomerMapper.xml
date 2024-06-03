@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.order.mappers.CustomerMapper">
+    <update id="updateCustomer" parameterType="Customer">
+        UPDATE customer
+        <set>
+            <if test="tableId != null">table_id = #{tableId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="updatedAt != null">updated_at = #{updatedAt},</if>
+            <if test="updatedBy != null">updated_by = #{updatedBy},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    <select id="listCustomers" resultType="org.order.pojo.entity.Customer">
+        SELECT id, table_id, status, created_at, updated_at, created_by, updated_by
+        FROM customer
+        <where>
+            <if test="id != null">AND id = #{id}</if>
+            <if test="tableId != null">AND table_id = #{tableId}</if>
+            <if test="status != null and status != ''">AND status = #{status}</if>
+        </where>
+    </select>
+</mapper>

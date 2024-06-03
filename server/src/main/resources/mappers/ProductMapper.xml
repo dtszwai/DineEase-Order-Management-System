@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.order.mappers.ProductMapper">
+    <insert id="createCategory">
+        INSERT INTO product (name, description, price, image, status, category_id, display_order, created_by,
+                             created_at, updated_by, updated_at)
+        VALUES (#{name}, #{description}, #{price}, #{image}, #{status}, #{categoryId}, #{displayOrder}, #{createdBy},
+                #{createdAt}, #{updatedBy}, #{updatedAt})
+    </insert>
+    <update id="updateProduct" parameterType="Product">
+        UPDATE product
+        <set>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="image != null">image = #{image},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="displayOrder != null">display_order = #{displayOrder},</if>
+            <if test="updatedBy != null">updated_by = #{updatedBy},</if>
+            <if test="updatedAt != null">updated_at = #{updatedAt},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    <select id="listProducts" resultType="org.order.pojo.vo.ProductAdminVO">
+        SELECT p.id,
+        p.name,
+        p.description,
+        p.price,
+        p.image,
+        p.status,
+        c.status as category_status,
+        p.category_id,
+        p.display_order,
+        c.name as category_name,
+        p.created_at,
+        cb.name AS created_by,
+        p.updated_at,
+        ub.name AS updated_by
+        FROM product p
+        LEFT JOIN employee cb ON p.created_by = cb.id
+        LEFT JOIN employee ub ON p.updated_by = ub.id
+        LEFT JOIN category c ON p.category_id = c.id
+        <where>
+            <if test="id != null">
+                AND p.id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                AND p.name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="categoryId != null">
+                AND p.category_id = #{categoryId}
+            </if>
+            <if test="status != null and status != ''">
+                AND p.status = #{status}
+            </if>
+            <if test="search != null and search != ''">
+                AND LOWER(p.name) LIKE CONCAT('%', LOWER(#{search}), '%')
+                OR LOWER(p.description) LIKE CONCAT('%', LOWER(#{search}), '%')
+            </if>
+        </where>
+        order by c.display_order, p.display_order
+        offset #{offset} limit #{limit}
+    </select>
+    <select id="listProductsForClient" resultType="org.order.pojo.vo.ProductClientVO">
+        SELECT p.id,
+        p.name,
+        p.description,
+        p.price,
+        p.image,
+        p.category_id,
+        p.status,
+        p.display_order,
+        c.name as category_name,
+        c.status as category_status
+        FROM product p
+        LEFT JOIN category c ON p.category_id = c.id
+        <where>
+            <if test="categoryId != null">
+                AND p.category_id = #{categoryId}
+            </if>
+        </where>
+        order by p.display_order
+    </select>
+    <select id="getProduct" resultType="org.order.pojo.vo.ProductAdminVO">
+        SELECT p.id,
+               p.name,
+               p.description,
+               p.price,
+               p.image,
+               p.status,
+               c.status AS category_status,
+               p.category_id,
+               p.display_order,
+               c.name   AS category_name,
+               p.created_at,
+               cb.name  AS created_by,
+               p.updated_at,
+               ub.name  AS updated_by
+        FROM product p
+                 LEFT JOIN employee cb ON p.created_by = cb.id
+                 LEFT JOIN employee ub ON p.updated_by = ub.id
+                 LEFT JOIN category c ON p.category_id = c.id
+        WHERE p.id = #{id}
+    </select>
+</mapper>

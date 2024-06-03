@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.order.mappers.CategoryMapper">
+    <insert id="createCategory">
+        INSERT INTO category (name, status, display_order, created_by, created_at, updated_by, updated_at)
+        VALUES (#{name}, #{status}, #{displayOrder}, #{createdBy}, #{createdAt}, #{updatedBy}, #{updatedAt});
+    </insert>
+    <update id="updateCategory" parameterType="Category">
+        UPDATE category
+        <set>
+            <if test="name != null and name !=''">name = #{name},</if>
+            <if test="status != null and status !=''">status = #{status},</if>
+            <if test="displayOrder != null">display_order = #{displayOrder},</if>
+            <if test="updatedBy != null">updated_by = #{updatedBy},</if>
+            <if test="updatedAt != null">updated_at = #{updatedAt},</if>
+        </set>
+        WHERE id = #{id};
+    </update>
+    <select id="listCategories" resultType="org.order.pojo.vo.CategoryAdminVO">
+        SELECT DISTINCT ON (c.id) c.id,
+        c.name,
+        c.display_order,
+        c.status,
+        c.created_at,
+        cb.name AS created_by,
+        c.updated_at,
+        ub.name AS updated_by,
+        COUNT(p.id) OVER (PARTITION BY c.id) AS product_count
+        FROM category c
+        LEFT JOIN employee cb ON c.created_by = cb.id
+        LEFT JOIN employee ub ON c.updated_by = ub.id
+        LEFT JOIN product p ON p.category_id = c.id
+        <where>
+            <if test="id != null">
+                AND c.id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                AND c.name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="status != null">
+                AND c.status = #{status}
+            </if>
+            <if test="search != null and search != ''">
+                AND LOWER(c.name) LIKE CONCAT('%', LOWER(#{search}), '%')
+            </if>
+        </where>
+        OFFSET #{offset} LIMIT #{limit};
+    </select>
+    <select id="getCategory" resultType="org.order.pojo.vo.CategoryAdminVO">
+        SELECT DISTINCT ON (c.id) c.id,
+                                  c.name,
+                                  c.display_order,
+                                  c.status,
+                                  c.created_at,
+                                  cb.name                              AS created_by,
+                                  c.updated_at,
+                                  ub.name                              AS updated_by,
+                                  COUNT(p.id) OVER (PARTITION BY c.id) AS product_count
+        FROM category c
+                 LEFT JOIN employee cb ON c.created_by = cb.id
+                 LEFT JOIN employee ub ON c.updated_by = ub.id
+                 LEFT JOIN product p ON p.category_id = c.id
+        WHERE c.id = #{id};
+    </select>
+</mapper>

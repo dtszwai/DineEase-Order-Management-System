@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.order.mappers.OrderMapper">
+    <update id="updateOrder" parameterType="org.order.pojo.entity.Orders">
+        UPDATE orders
+        <set>
+            <if test="status != null">status = #{status},</if>
+            <if test="totalPrice != null">total_price = #{totalPrice},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    <select id="listOrders" resultType="org.order.pojo.vo.OrderSummary">
+        WITH order_totals AS (SELECT customer_id, SUM(total_price) AS total_price
+        FROM orders
+        GROUP BY customer_id)
+        SELECT c.id                        AS customer_id,
+               c.table_id,
+               c.status,
+               c.num_people,
+               c.updated_at,
+               ub.name                     AS updated_by,
+               COALESCE(ot.total_price, 0) AS total_price
+        FROM customer c
+                 LEFT JOIN order_totals ot ON c.id = ot.customer_id
+                 JOIN employee cb ON c.created_by = cb.id
+                 JOIN employee ub ON c.updated_by = ub.id;
+    </select>
+</mapper>
