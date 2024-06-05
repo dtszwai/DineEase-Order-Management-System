@@ -1,0 +1,43 @@
+name: dineease
+
+services:
+  server:
+    env_file:
+      - ./.env
+    build:
+      context: ./server
+      args:
+        POSTGRES_USER: "${POSTGRES_USER}"
+        POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+        POSTGRES_DB: "${POSTGRES_DB}"
+        POSTGRES_PORT: "${POSTGRES_PORT}"
+        SERVER_PORT: "${SERVER_PORT}"
+    restart: always
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    networks:
+      - network
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POSTGRES_DB}"
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    volumes:
+      - ./server/database/data:/var/lib/postgresql/data
+      - ./server/database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge
+
+volumes:
+  db_data:

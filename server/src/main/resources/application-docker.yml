@@ -1,0 +1,17 @@
+spring:
+  main:
+    allow-circular-references: true
+  datasource:
+    driver-class-name: org.postgresql.Driver
+
+mybatis:
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: org.order.pojo.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+jwt:
+  header-name: Authorization
+  admin-secret-key: "RZY8jLh+6Amg+FoW3sgbm6GcF5qCE+kXGIokn+LcFKk="
+  # JWT Token expiration time: 2 hours (7200000 ms)
+  admin-ttl: 7200000

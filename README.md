@@ -41,3 +41,13 @@ API documentation is generated using Swagger and can be accessed at `/swagger-ui
 ## Database Schema
 
 The database schema includes tables for products, categories, employees, customers, and orders. Each product has a name, description, price, status, display order, category ID, and image URL. The schema is designed to be flexible and scalable to accommodate future enhancements.
+
+## Installation
+
+You can use docker-compose to run the application locally. The docker-compose file includes services for the backend, and PostgreSQL database. To start the application, run the following command:
+
+```bash
+docker-compose up -d
+```
+
+The backend server will be accessible at `http://localhost:8080`.
